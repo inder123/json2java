@@ -20,7 +20,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Definition of a single class as derived from JSON data.
@@ -89,6 +92,7 @@ public class ClassDefinition {
   }
 
   public void writeClassFile(File dir, String indent) throws IOException {
+    updateImports();
     dir = new File(dir, pkg.replaceAll("\\.", File.separator));
     dir.mkdirs();
     File classFile = new File(dir, className + ".java");
@@ -102,6 +106,20 @@ public class ClassDefinition {
       writeAccessorMethods(writer, indent);
       writer.append("}\n");
     }
+  }
+
+  private void updateImports() {
+    for (ClassField field : fields) {
+      if (field.getTypeName().equals("Date")) {
+        addImport("java.util.Date");
+      }
+    }
+    // remove duplicates
+    Set<String> set = new HashSet<>();
+    set.addAll(imports);
+    imports.clear();
+    imports.addAll(set);
+    Collections.sort(imports);
   }
 
   private void writeImports(Writer writer) throws IOException {

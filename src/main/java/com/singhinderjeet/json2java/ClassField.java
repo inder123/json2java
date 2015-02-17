@@ -16,7 +16,6 @@
 package com.singhinderjeet.json2java;
 
 import java.io.IOException;
-import java.io.Writer;
 
 /**
  * Definition of a class field. We assume it to be private final.
@@ -45,7 +44,7 @@ public class ClassField {
     }
   }
 
-  private String getTypeName() {
+  public String getTypeName() {
     StringBuilder sb = new StringBuilder();
     if (isArrayType) sb.append("List<");
     sb.append(type);
