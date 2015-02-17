@@ -54,6 +54,11 @@ public class Json2JavaTest {
     InputStreamReader reader = new InputStreamReader(json, "UTF-8");
     File dir = File.createTempFile("json2java", "src").getParentFile();
     Json2Java converter = new Json2Java(reader, "com.tms.lineups", "Lineup");
+    CustomMappings mappings = new CustomMappings()
+      .mapType("LineupId", "String")
+      .mapType("Name", "String")
+      .mapType("Type", "String");
+    converter.transform(mappings);
     ClassDefCollection classes = converter.getClasses();
     classes.generateClasses(dir, "    ");
   }
