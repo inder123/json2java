@@ -1,0 +1,51 @@
+[
+  {
+    "type": "OTA",
+    "lineupId": "USA-OTA27713",
+    "name": "Local"
+  },
+  {
+    "type": "CABLE",
+    "lineupId": "USA-NC32461-DEFAULT",
+    "name": "Time Warner Cable - Cable (Durham)",
+    "device": "DEFAULT",
+    "location": "Durham",
+    "mso": {
+      "id": "08670",
+       "name": "Time Warner Cable"
+     }
+  },
+  {
+    "type": "CABLE",
+    "lineupId": "USA-NC32461-X",
+    "name": "Time Warner Cable - Digital (Durham)",
+    "device": "X",
+    "location": "Durham",
+    "mso": {
+      "id": "08670",
+       "name": "Time Warner Cable"
+     }
+  },
+  {
+    "type": "CABLE",
+    "lineupId": "USA-NC67566-X",
+    "name": "AT&T U-verse TV - Digital (Cary)",
+    "device": "X",
+    "location": "Cary",
+    "mso": {
+      "id": "17304",
+      "name": "AT&T U-verse TV"
+    }
+  },
+  {
+    "type": "SATELLITE",
+    "lineupId": "USA-DITV560-DEFAULT",
+    "name": "DIRECTV Raleigh (Raleigh)",
+    "device": "DEFAULT",
+    "location": "Raleigh",
+    "mso": {
+      "id": "17580",
+      "name": "DIRECTV"
+    }
+  }]
+

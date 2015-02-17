@@ -35,4 +35,12 @@ public class MainTest {
     Main main = new Main("com.reversegeocoding", "ReverseGeocodingResults", dir);
     main.generate(new InputStreamReader(json, "UTF-8"));
   }
+
+  @Test
+  public void testTmsLineupsJson() throws Exception {
+    InputStream json = MainTest.class.getResourceAsStream("/tms-lineups.json");
+    File dir = File.createTempFile("json2java", "src").getParentFile();
+    Main main = new Main("com.tms.lineups", "Lineup", dir);
+    main.generate(new InputStreamReader(json, "UTF-8"));
+  }
 }
