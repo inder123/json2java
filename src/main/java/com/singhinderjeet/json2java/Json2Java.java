@@ -33,7 +33,7 @@ import com.google.gson.JsonPrimitive;
 public class Json2Java {
   private final ClassDefCollection classes = new ClassDefCollection();
 
-  public Json2Java(Reader reader, String rootPackage, String rootClassName) throws IOException {
+  public void processJson(Reader reader, String rootPackage, String rootClassName) throws IOException {
     JsonElement root = new JsonParser().parse(reader);
     reader.close();
     while (!(root instanceof JsonObject)) {

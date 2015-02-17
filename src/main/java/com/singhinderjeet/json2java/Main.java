@@ -37,7 +37,8 @@ public class Main {
   }
 
   public void generate(Reader reader) throws IOException {
-    Json2Java converter = new Json2Java(reader, packageName, rootClassName);
+    Json2Java converter = new Json2Java();
+    converter.processJson(reader, packageName, rootClassName);
     ClassDefCollection classes = converter.getClasses();
     classes.generateClasses(outputDir, "    ");
   }

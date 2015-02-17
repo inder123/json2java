@@ -33,7 +33,8 @@ public class Json2JavaTest {
     InputStream json = Json2JavaTest.class.getResourceAsStream("/reversegeocoding.json");
     InputStreamReader reader = new InputStreamReader(json, "UTF-8");
     File dir = File.createTempFile("json2java", "src").getParentFile();
-    Json2Java converter = new Json2Java(reader, "com.reversegeocoding", "ReverseGeocodingResults");
+    Json2Java converter = new Json2Java();
+    converter.processJson(reader, "com.reversegeocoding", "ReverseGeocodingResults");
     CustomMappings mappings = new CustomMappings()
       .mapType("Types", "String")
       .mapType("Northeast", "Location")
@@ -53,7 +54,8 @@ public class Json2JavaTest {
     InputStream json = Json2JavaTest.class.getResourceAsStream("/tms-lineups.json");
     InputStreamReader reader = new InputStreamReader(json, "UTF-8");
     File dir = File.createTempFile("json2java", "src").getParentFile();
-    Json2Java converter = new Json2Java(reader, "com.tms.lineups", "Lineup");
+    Json2Java converter = new Json2Java();
+    converter.processJson(reader, "com.tms.lineups", "Lineup");
     CustomMappings mappings = new CustomMappings()
       .mapType("LineupId", "String")
       .mapType("Name", "String")
