@@ -18,7 +18,7 @@ package com.singhinderjeet.json2java;
 import java.io.IOException;
 
 /**
- * This represents the field of a class.
+ * Definition of a class field. We assume it to be private final.
  *
  * @author Inderjeet Singh
  */
@@ -26,20 +26,20 @@ public class ClassField {
 
   private final String name;
   private final String type;
-  private final String indent;
 
-  public ClassField(String name, String type, String indent) {
+  public ClassField(String name, String type) {
     this.name = name;
     this.type = type;
-    this.indent = indent;
   }
 
-  public void appendtDeclaration(Appendable appendable, int indentLevel) throws IOException {
+  public void appendtDeclaration(Appendable appendable, int indentLevel, String indent)
+      throws IOException {
     for (int i = 0; i < indentLevel; ++i) appendable.append(indent);
     appendable.append("private final " + type + " " + name + ";\n");
   }
 
-  public void appendAccessorMethods(Appendable appendable, int indentLevel) throws IOException {
+  public void appendAccessorMethods(Appendable appendable, int indentLevel, String indent)
+      throws IOException {
     for (int i = 0; i < indentLevel; ++i) appendable.append(indent);
     appendable.append("public " + type + " get" + Utils.firstLetterUpperCase(name) + "() {\n");
     for (int i = 0; i < indentLevel + 1; ++i) appendable.append(indent);

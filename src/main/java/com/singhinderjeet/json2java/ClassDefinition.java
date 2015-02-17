@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This represents a class.
+ * Definition of a single class as derived from JSON data.
  *
  * @author Inderjeet Singh
  */
@@ -60,8 +60,8 @@ public class ClassDefinition {
       writer.append("package " + rootPackage + ";\n");
       writeImports(writer);
       writer.append("\n").append("public class " + rootClassName + " {\n");
-      writeFieldDeclarations(writer);
-      writeAccessorMethods(writer);
+      writeFieldDeclarations(writer, indent);
+      writeAccessorMethods(writer, indent);
       writer.append("}\n");
     }
   }
@@ -73,17 +73,17 @@ public class ClassDefinition {
     }
   }
 
-  private void writeFieldDeclarations(Writer writer) throws IOException {
+  private void writeFieldDeclarations(Writer writer, String indent) throws IOException {
     writer.append("\n");
     for (ClassField field : fields) {
-      field.appendtDeclaration(writer, 1);
+      field.appendtDeclaration(writer, 1, indent);
     }
   }
 
-  private void writeAccessorMethods(Writer writer) throws IOException {
+  private void writeAccessorMethods(Writer writer, String indent) throws IOException {
     for (ClassField field : fields) {
       writer.append("\n");
-      field.appendAccessorMethods(writer, 1);
+      field.appendAccessorMethods(writer, 1, indent);
     }
   }
 

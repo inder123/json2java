@@ -31,7 +31,6 @@ import com.google.gson.JsonPrimitive;
  * @author Inderjeet Singh
  */
 public class Json2Java {
-  private final String indent = "  ";
   private final ClassDefCollection classes = new ClassDefCollection();
 
   public Json2Java(Reader reader, String rootPackage, String rootClassName) throws IOException {
@@ -58,17 +57,17 @@ public class Json2Java {
       String type = Utils.lowerCaseUnderscoreToCamelCase(name, true);
       name = Utils.lowerCaseUnderscoreToCamelCase(name, false);
       if (value instanceof JsonPrimitive) {
-        classDef.addField(new ClassField(name, type, indent));
+        classDef.addField(new ClassField(name, type));
       } else if (value instanceof JsonArray) {
         classDef.addImport("java.util.List");
-        classDef.addField(new ClassField(name, "List<" + type + ">", indent));
+        classDef.addField(new ClassField(name, "List<" + type + ">"));
         JsonArray array = value.getAsJsonArray();
         if (array.size() > 0) {
           value = array.get(0);
         }
       }
       if (value instanceof JsonObject) {
-        classDef.addField(new ClassField(name, type, indent));
+        classDef.addField(new ClassField(name, type));
         generateClasses(value.getAsJsonObject(), rootPackage, type);
       }
     }
