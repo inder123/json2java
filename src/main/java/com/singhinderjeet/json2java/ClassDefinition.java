@@ -98,6 +98,7 @@ public class ClassDefinition {
       writeImports(writer);
       writer.append("\n").append("public class " + className + " {\n");
       writeFieldDeclarations(writer, indent);
+      writeConstructor(writer, indent);
       writeAccessorMethods(writer, indent);
       writer.append("}\n");
     }
@@ -115,6 +116,23 @@ public class ClassDefinition {
     for (ClassField field : fields) {
       field.appendtDeclaration(writer, 1, indent);
     }
+  }
+
+  private void writeConstructor(Writer writer, String indent) throws IOException {
+    writer.append("\n").append(indent);
+    writer.append("public " + className + "(");
+    boolean first = true;
+    for (ClassField field : fields) {
+      if (first) first = false; else writer.append(", ");
+      field.appendParameter(writer);
+    }
+    writer.append(") {\n");
+    first = true;
+    for (ClassField field : fields) {
+      if (first) first = false; else writer.append("\n");
+      field.appendConstructorAssignment(writer, 2, indent);
+    }
+    writer.append("\n").append(indent).append("}\n");
   }
 
   private void writeAccessorMethods(Writer writer, String indent) throws IOException {

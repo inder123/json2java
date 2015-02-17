@@ -16,6 +16,7 @@
 package com.singhinderjeet.json2java;
 
 import java.io.IOException;
+import java.io.Writer;
 
 /**
  * Definition of a class field. We assume it to be private final.
@@ -65,5 +66,15 @@ public class ClassField {
     appendable.append("return " + name + ";\n");
     for (int i = 0; i < indentLevel; ++i) appendable.append(indent);
     appendable.append("}\n");
+  }
+
+  public void appendParameter(Appendable appendable) throws IOException {
+    appendable.append(getTypeName()).append(" ").append(name);
+  }
+
+  public void appendConstructorAssignment(Appendable appendable, int indentLevel, String indent)
+      throws IOException {
+    for (int i = 0; i < indentLevel; ++i) appendable.append(indent);
+    appendable.append("this.").append(name).append(" = ").append(name).append(";");
   }
 }
