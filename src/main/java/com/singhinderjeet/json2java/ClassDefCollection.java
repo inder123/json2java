@@ -29,23 +29,19 @@ public class ClassDefCollection {
   private final List<ClassDefinition> classes = Utils.<ClassDefinition>asList(
       new ClassDefinition("java.lang", "String"));
 
+  public ClassDefinition addClassDefinition(String pkg, String className) {
+    ClassDefinition clazz = findByTypeName(className);
+    if (clazz == null) {
+      clazz = new ClassDefinition(pkg, className);
+      classes.add(clazz);
+    }
+    return clazz;
+  }
+
   public void generateClasses(File dir, String indent) throws IOException {
     for (ClassDefinition def : classes) {
       def.writeClassFile(dir, indent);
     }
-  }
-
-  public void add(ClassDefinition classDef) {
-    if (!present(classDef)) {
-      classes.add(classDef);
-    }
-  }
-
-  private boolean present(ClassDefinition classDef) {
-    for (ClassDefinition def : classes) {
-      if (def.isSame(classDef)) return true;
-    }
-    return false;
   }
 
   private ClassDefinition findByTypeName(String typeName) {

@@ -53,8 +53,7 @@ public class Json2Java {
   }
 
   private void generateClasses(JsonObject root, String rootPackage, String rootClassName) throws IOException {
-    ClassDefinition classDef = new ClassDefinition(rootPackage, rootClassName);
-    classes.add(classDef);
+    ClassDefinition classDef = classes.addClassDefinition(rootPackage, rootClassName);
     for (Map.Entry<String, JsonElement> element : root.entrySet()) {
       String name = element.getKey();
       JsonElement value = element.getValue();
