@@ -26,21 +26,25 @@ import org.junit.Test;
  *
  * @author Inderjeet Singh
  */
-public class MainTest {
+public class Json2JavaTest {
 
   @Test
   public void testReverseGeocodingJson() throws Exception {
-    InputStream json = MainTest.class.getResourceAsStream("/reversegeocoding.json");
+    InputStream json = Json2JavaTest.class.getResourceAsStream("/reversegeocoding.json");
+    InputStreamReader reader = new InputStreamReader(json, "UTF-8");
     File dir = File.createTempFile("json2java", "src").getParentFile();
-    Main main = new Main("com.reversegeocoding", "ReverseGeocodingResults", dir);
-    main.generate(new InputStreamReader(json, "UTF-8"));
+    Json2Java converter = new Json2Java(reader, "com.reversegeocoding", "ReverseGeocodingResults");
+    ClassDefCollection classes = converter.getClasses();
+    classes.generateClasses(dir, "    ");
   }
 
   @Test
   public void testTmsLineupsJson() throws Exception {
-    InputStream json = MainTest.class.getResourceAsStream("/tms-lineups.json");
+    InputStream json = Json2JavaTest.class.getResourceAsStream("/tms-lineups.json");
+    InputStreamReader reader = new InputStreamReader(json, "UTF-8");
     File dir = File.createTempFile("json2java", "src").getParentFile();
-    Main main = new Main("com.tms.lineups", "Lineup", dir);
-    main.generate(new InputStreamReader(json, "UTF-8"));
+    Json2Java converter = new Json2Java(reader, "com.tms.lineups", "Lineup");
+    ClassDefCollection classes = converter.getClasses();
+    classes.generateClasses(dir, "    ");
   }
 }
