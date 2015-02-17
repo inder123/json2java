@@ -61,17 +61,17 @@ public class Json2Java {
       String type = Utils.lowerCaseUnderscoreToCamelCase(name, true);
       name = Utils.lowerCaseUnderscoreToCamelCase(name, false);
       if (value instanceof JsonPrimitive) {
-        classDef.addField(new ClassField(name, type));
+        classDef.addField(new ClassField(name, type, false));
       } else if (value instanceof JsonArray) {
         classDef.addImport("java.util.List");
-        classDef.addField(new ClassField(name, "List<" + type + ">"));
+        classDef.addField(new ClassField(name, type, true));
         JsonArray array = value.getAsJsonArray();
         if (array.size() > 0) {
           value = array.get(0);
         }
       }
       if (value instanceof JsonObject) {
-        classDef.addField(new ClassField(name, type));
+        classDef.addField(new ClassField(name, type, false));
         generateClasses(value.getAsJsonObject(), rootPackage, type);
       }
     }

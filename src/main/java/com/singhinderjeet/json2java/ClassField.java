@@ -26,10 +26,12 @@ public class ClassField {
 
   private final String name;
   private String type;
+  private final boolean isArrayType;
 
-  public ClassField(String name, String type) {
+  public ClassField(String name, String type, boolean isArrayType) {
     this.name = name;
     this.type = type;
+    this.isArrayType = isArrayType;
   }
 
   public String getName() {
@@ -42,16 +44,23 @@ public class ClassField {
     }
   }
 
+  private String getTypeName() {
+    StringBuilder sb = new StringBuilder();
+    if (isArrayType) sb.append("List<");
+    sb.append(type);
+    if (isArrayType) sb.append(">");
+    return sb.toString();
+  }
   public void appendtDeclaration(Appendable appendable, int indentLevel, String indent)
       throws IOException {
     for (int i = 0; i < indentLevel; ++i) appendable.append(indent);
-    appendable.append("private final " + type + " " + name + ";\n");
+    appendable.append("private final " + getTypeName() + " " + name + ";\n");
   }
 
   public void appendAccessorMethods(Appendable appendable, int indentLevel, String indent)
       throws IOException {
     for (int i = 0; i < indentLevel; ++i) appendable.append(indent);
-    appendable.append("public " + type + " get" + Utils.firstLetterUpperCase(name) + "() {\n");
+    appendable.append("public " + getTypeName() + " get" + Utils.firstLetterUpperCase(name) + "() {\n");
     for (int i = 0; i < indentLevel + 1; ++i) appendable.append(indent);
     appendable.append("return " + name + ";\n");
     for (int i = 0; i < indentLevel; ++i) appendable.append(indent);
