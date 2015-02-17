@@ -17,8 +17,8 @@ package com.singhinderjeet.json2java;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A list of class definitions.
@@ -26,7 +26,8 @@ import java.util.List;
  * @author Inderjeet Singh
  */
 public class ClassDefCollection {
-  private final List<ClassDefinition> classes = new ArrayList<>();
+  private final List<ClassDefinition> classes = Utils.<ClassDefinition>asList(
+      new ClassDefinition("java.lang", "String"));
 
   public void generateClasses(File dir, String indent) throws IOException {
     for (ClassDefinition def : classes) {
@@ -45,5 +46,34 @@ public class ClassDefCollection {
       if (def.isSame(classDef)) return true;
     }
     return false;
+  }
+
+  private ClassDefinition findByTypeName(String typeName) {
+    for (ClassDefinition def : classes) {
+      if (def.getRootClassName().equals(typeName)) return def;
+    }
+    return null;
+  }
+
+  /** Applies the specified mappings to all the classes */
+  public void transform(CustomMappings mappings) {
+    for (Map.Entry<String, String> mapping : mappings.entrySet()) {
+      String origType = mapping.getKey();
+      String mappedType = mapping.getValue();
+      ClassDefinition origClass = findByTypeName(origType);
+      ClassDefinition mappedClass = findByTypeName(mappedType);
+      if (mappedClass == null) {
+        if (origClass != null) origClass.rename(mappedType);
+      } else {
+        mappedClass.merge(origClass);
+        classes.remove(mappedClass);
+      }
+      for (ClassDefinition clazz : classes) {
+        clazz.mapType(origType, mappedType);
+        if (clazz.getRootClassName().equals(origType)) {
+          clazz.rename(mappedType);
+        }
+      }
+    }
   }
 }

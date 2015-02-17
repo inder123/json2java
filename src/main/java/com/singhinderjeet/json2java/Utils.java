@@ -15,6 +15,9 @@
  */
 package com.singhinderjeet.json2java;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Utility methods.
  *
@@ -39,5 +42,12 @@ public class Utils {
 
   public static String firstLetterUpperCase(String name) {
     return Character.toUpperCase(name.charAt(0)) + (name.length() > 1 ? name.substring(1) : "");
+  }
+
+  @SafeVarargs
+  public static <T> List<T> asList(T... elements) {
+    List<T> list = new ArrayList<T>();
+    for (T element : elements) list.add(element);
+    return list;
   }
 }

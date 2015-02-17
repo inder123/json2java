@@ -25,11 +25,21 @@ import java.io.IOException;
 public class ClassField {
 
   private final String name;
-  private final String type;
+  private String type;
 
   public ClassField(String name, String type) {
     this.name = name;
     this.type = type;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void mapType(String type, String mappedType) {
+    if (this.type.equals(type)) {
+      this.type = mappedType;
+    }
   }
 
   public void appendtDeclaration(Appendable appendable, int indentLevel, String indent)

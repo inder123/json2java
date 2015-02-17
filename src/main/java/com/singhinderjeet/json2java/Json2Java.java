@@ -48,6 +48,10 @@ public class Json2Java {
     }
   }
 
+  public void transform(CustomMappings mappings) {
+    classes.transform(mappings);
+  }
+
   private void generateClasses(JsonObject root, String rootPackage, String rootClassName) throws IOException {
     ClassDefinition classDef = new ClassDefinition(rootPackage, rootClassName);
     classes.add(classDef);

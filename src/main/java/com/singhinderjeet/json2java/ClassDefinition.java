@@ -30,7 +30,7 @@ import java.util.List;
 public class ClassDefinition {
 
   private final String rootPackage;
-  private final String rootClassName;
+  private String rootClassName;
   private final List<String> imports = new ArrayList<>();
   private final List<ClassField> fields = new ArrayList<>();
 
@@ -39,12 +39,49 @@ public class ClassDefinition {
     this.rootClassName = rootClassName;
   }
 
+  public void addField(ClassField classField) {
+    fields.add(classField);
+  }
+
+  public void addImport(String importedClass) {
+    if (!imports.contains(importedClass)) {
+      imports.add(importedClass);
+    }
+  }
+
+  public void mapType(String type, String mappedType) {
+    for (ClassField field : fields) {
+      field.mapType(type, mappedType);
+    }
+  }
+
+  /** Copies the additional fields of other that are not present in self */
+  public void merge(ClassDefinition other) {
+    if (other == null) return;
+    for (ClassField field : other.fields) {
+      if (!present(field.getName())) {
+        addField(field);
+      }
+    }
+  }
+
+  public void rename(String mappedType) {
+    this.rootClassName = mappedType;
+  }
+
   public String getRootPackage() {
     return rootPackage;
   }
 
   public String getRootClassName() {
     return rootClassName;
+  }
+
+  public boolean present(String fieldName) {
+    for (ClassField field : fields) {
+      if (field.getName().equals(fieldName)) return true;
+    }
+    return false;
   }
 
   public boolean isSame(ClassDefinition other) {
@@ -84,16 +121,6 @@ public class ClassDefinition {
     for (ClassField field : fields) {
       writer.append("\n");
       field.appendAccessorMethods(writer, 1, indent);
-    }
-  }
-
-  public void addField(ClassField classField) {
-    fields.add(classField);
-  }
-
-  public void addImport(String importedClass) {
-    if (!imports.contains(importedClass)) {
-      imports.add(importedClass);
     }
   }
 }

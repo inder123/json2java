@@ -34,6 +34,16 @@ public class Json2JavaTest {
     InputStreamReader reader = new InputStreamReader(json, "UTF-8");
     File dir = File.createTempFile("json2java", "src").getParentFile();
     Json2Java converter = new Json2Java(reader, "com.reversegeocoding", "ReverseGeocodingResults");
+    CustomMappings mappings = new CustomMappings()
+      .mapType("Types", "String")
+      .mapType("Northeast", "Location")
+      .mapType("Southeast", "Location")
+      .mapType("Southwest", "Location")
+      .mapType("Northwest", "Location")
+      .mapType("AddressComponents", "AddressComponent")
+      .mapType("LongName", "String")
+      .mapType("ShortName", "String");
+    converter.transform(mappings);
     ClassDefCollection classes = converter.getClasses();
     classes.generateClasses(dir, "    ");
   }
