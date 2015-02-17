@@ -40,7 +40,7 @@ public class ClassDefinition {
   }
 
   public void addField(ClassField classField) {
-    fields.add(classField);
+    if (!present(classField.getName())) fields.add(classField);
   }
 
   public void addImport(String importedClass) {
