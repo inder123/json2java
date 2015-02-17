@@ -29,14 +29,14 @@ import java.util.List;
  */
 public class ClassDefinition {
 
-  private final String rootPackage;
-  private String rootClassName;
+  private final String pkg;
+  private String className;
   private final List<String> imports = new ArrayList<>();
   private final List<ClassField> fields = new ArrayList<>();
 
-  public ClassDefinition(String rootPackage, String rootClassName) {
-    this.rootPackage = rootPackage;
-    this.rootClassName = rootClassName;
+  public ClassDefinition(String pkg, String className) {
+    this.pkg = pkg;
+    this.className = className;
   }
 
   public void addField(ClassField classField) {
@@ -66,15 +66,15 @@ public class ClassDefinition {
   }
 
   public void rename(String mappedType) {
-    this.rootClassName = mappedType;
+    this.className = mappedType;
   }
 
-  public String getRootPackage() {
-    return rootPackage;
+  public String getPackage() {
+    return pkg;
   }
 
-  public String getRootClassName() {
-    return rootClassName;
+  public String getClassName() {
+    return className;
   }
 
   public boolean present(String fieldName) {
@@ -85,18 +85,18 @@ public class ClassDefinition {
   }
 
   public boolean isSame(ClassDefinition other) {
-    return this.rootClassName.equals(other.rootClassName);
+    return this.className.equals(other.className);
   }
 
   public void writeClassFile(File dir, String indent) throws IOException {
-    dir = new File(dir, rootPackage.replaceAll("\\.", File.separator));
+    dir = new File(dir, pkg.replaceAll("\\.", File.separator));
     dir.mkdirs();
-    File classFile = new File(dir, rootClassName + ".java");
+    File classFile = new File(dir, className + ".java");
     try (Writer writer = new FileWriter(classFile)) {
       System.out.println("Writing " + classFile.getAbsolutePath());
-      writer.append("package " + rootPackage + ";\n");
+      writer.append("package " + pkg + ";\n");
       writeImports(writer);
-      writer.append("\n").append("public class " + rootClassName + " {\n");
+      writer.append("\n").append("public class " + className + " {\n");
       writeFieldDeclarations(writer, indent);
       writeAccessorMethods(writer, indent);
       writer.append("}\n");

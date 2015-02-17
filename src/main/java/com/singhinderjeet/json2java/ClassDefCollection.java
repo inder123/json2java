@@ -50,7 +50,7 @@ public class ClassDefCollection {
 
   private ClassDefinition findByTypeName(String typeName) {
     for (ClassDefinition def : classes) {
-      if (def.getRootClassName().equals(typeName)) return def;
+      if (def.getClassName().equals(typeName)) return def;
     }
     return null;
   }
@@ -70,7 +70,7 @@ public class ClassDefCollection {
       }
       for (ClassDefinition clazz : classes) {
         clazz.mapType(origType, mappedType);
-        if (clazz.getRootClassName().equals(origType)) {
+        if (clazz.getClassName().equals(origType)) {
           clazz.rename(mappedType);
         }
       }
