@@ -26,17 +26,30 @@ import java.util.Set;
  */
 public class CustomMappings {
 
-  private final Map<String, String> mappedTypes = new HashMap<>();
+  public static final class MappedName {
+    public final String name;
+    public final boolean isArrayType;
+    public MappedName(String name, boolean isArrayType) {
+      this.name = name;
+      this.isArrayType = isArrayType;
+    }
+  }
+  private final Map<String, MappedName> mappedTypes = new HashMap<>();
 
   /**
    * replaces all classes of type name with mappedName.
    */
   public CustomMappings mapType(String name, String mappedName) {
-    mappedTypes.put(name, mappedName);
+    mappedTypes.put(name, new MappedName(mappedName, false));
     return this;
   }
 
-  public Set<Map.Entry<String,String>> entrySet() {
+  public CustomMappings mapToArrayType(String name, String mappedArrayElementName) {
+    mappedTypes.put(name, new MappedName(mappedArrayElementName, true));
+    return this;
+  }
+
+  public Set<Map.Entry<String,MappedName>> entrySet() {
     return mappedTypes.entrySet();
   }
 

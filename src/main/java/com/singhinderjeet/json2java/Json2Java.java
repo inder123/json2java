@@ -70,8 +70,10 @@ public class Json2Java {
         classDef.addImport("java.util.List");
         classDef.addField(new ClassField(name, type, true));
         JsonArray array = value.getAsJsonArray();
-        if (array.size() > 0) {
-          value = array.get(0);
+        for (JsonElement arrayElement : array) {
+          if (arrayElement instanceof JsonObject) { // Use all elements of the array
+            generateClasses(classes, arrayElement.getAsJsonObject(), pkg, type);
+          }
         }
       }
       if (value instanceof JsonObject) {

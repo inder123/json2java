@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import com.singhinderjeet.json2java.CustomMappings.MappedName;
+
 /**
  * A list of class definitions.
  *
@@ -65,9 +67,10 @@ public class ClassDefCollection {
   /** Applies the specified mappings to all the classes */
   public void transform(CustomMappings mappings) {
     if (mappings == null) return;
-    for (Map.Entry<String, String> mapping : mappings.entrySet()) {
+    for (Map.Entry<String, MappedName> mapping : mappings.entrySet()) {
       String origType = mapping.getKey();
-      String mappedType = mapping.getValue();
+      String mappedType = mapping.getValue().name;
+      boolean isArrayType = mapping.getValue().isArrayType;
       ClassDefinition origClass = findByTypeName(origType);
       ClassDefinition mappedClass = findByTypeName(mappedType);
       if (mappedClass == null) {
@@ -77,7 +80,7 @@ public class ClassDefCollection {
         classes.remove(mappedClass);
       }
       for (ClassDefinition clazz : classes) {
-        clazz.mapType(origType, mappedType);
+        clazz.mapType(origType, mappedType, isArrayType);
         if (clazz.getClassName().equals(origType)) {
           clazz.rename(mappedType);
         }

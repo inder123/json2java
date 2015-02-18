@@ -54,9 +54,9 @@ public class ClassDefinition {
     }
   }
 
-  public void mapType(String type, String mappedType) {
+  public void mapType(String type, String mappedType, boolean isArrayType) {
     for (ClassField field : fields) {
-      field.mapType(type, mappedType);
+      field.mapType(type, mappedType, isArrayType);
     }
   }
 

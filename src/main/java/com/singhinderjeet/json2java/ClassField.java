@@ -26,7 +26,7 @@ public class ClassField {
 
   private final String name;
   private String type;
-  private final boolean isArrayType;
+  private boolean isArrayType;
 
   public ClassField(String name, String type, boolean isArrayType) {
     this.name = name;
@@ -38,9 +38,10 @@ public class ClassField {
     return name;
   }
 
-  public void mapType(String type, String mappedType) {
+  public void mapType(String type, String mappedType, boolean isArrayType) {
     if (this.type.equals(type)) {
       this.type = mappedType;
+      this.isArrayType = isArrayType;
     }
   }
 
