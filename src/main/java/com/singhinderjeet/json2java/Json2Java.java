@@ -33,7 +33,8 @@ import com.google.gson.JsonPrimitive;
 public class Json2Java {
   private final ClassDefCollection classes = new ClassDefCollection();
 
-  public void processJson(Reader reader, String rootPackage, String rootClassName) throws IOException {
+  public void processJson(Reader reader, String pkg, String className,
+      CustomMappings mappings) throws IOException {
     JsonElement root = new JsonParser().parse(reader);
     reader.close();
     while (!(root instanceof JsonObject)) {
@@ -44,7 +45,10 @@ public class Json2Java {
       }
     }
     if (root instanceof JsonObject) {
-      generateClasses(root.getAsJsonObject(), rootPackage, rootClassName);
+      ClassDefCollection classes = new ClassDefCollection();
+      generateClasses(classes, root.getAsJsonObject(), pkg, className);
+      classes.transform(mappings);
+      this.classes.merge(classes);
     }
   }
 
@@ -52,8 +56,9 @@ public class Json2Java {
     classes.transform(mappings);
   }
 
-  private void generateClasses(JsonObject root, String rootPackage, String rootClassName) throws IOException {
-    ClassDefinition classDef = classes.addClassDefinition(rootPackage, rootClassName);
+  private void generateClasses(ClassDefCollection classes, JsonObject root,
+      String pkg, String className) throws IOException {
+    ClassDefinition classDef = classes.addClassDefinition(pkg, className);
     for (Map.Entry<String, JsonElement> element : root.entrySet()) {
       String name = element.getKey();
       JsonElement value = element.getValue();
@@ -71,7 +76,7 @@ public class Json2Java {
       }
       if (value instanceof JsonObject) {
         classDef.addField(new ClassField(name, type, false));
-        generateClasses(value.getAsJsonObject(), rootPackage, type);
+        generateClasses(classes, value.getAsJsonObject(), pkg, type);
       }
     }
   }

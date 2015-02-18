@@ -30,7 +30,6 @@ public class CustomMappings {
 
   /**
    * replaces all classes of type name with mappedName.
-   * if name class exists, then mappedName must exist, else it is left unmapped.
    */
   public CustomMappings mapType(String name, String mappedName) {
     mappedTypes.put(name, mappedName);
@@ -39,5 +38,12 @@ public class CustomMappings {
 
   public Set<Map.Entry<String,String>> entrySet() {
     return mappedTypes.entrySet();
+  }
+
+  public CustomMappings addMappings(CustomMappings other) {
+    if (other != null) {
+      this.mappedTypes.putAll(other.mappedTypes);
+    }
+    return this;
   }
 }

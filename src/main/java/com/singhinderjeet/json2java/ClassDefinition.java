@@ -36,10 +36,12 @@ public class ClassDefinition {
   private String className;
   private final List<String> imports = new ArrayList<>();
   private final List<ClassField> fields = new ArrayList<>();
+  private final boolean generateFile;
 
   public ClassDefinition(String pkg, String className) {
     this.pkg = pkg;
     this.className = className;
+    this.generateFile = !pkg.startsWith("java");
   }
 
   public void addField(ClassField classField) {
@@ -92,6 +94,7 @@ public class ClassDefinition {
   }
 
   public void writeClassFile(File dir, String indent) throws IOException {
+    if (!generateFile) return;
     updateImports();
     dir = new File(dir, pkg.replaceAll("\\.", File.separator));
     dir.mkdirs();

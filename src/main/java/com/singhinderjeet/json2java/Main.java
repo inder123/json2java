@@ -36,9 +36,9 @@ public class Main {
     this.outputDir = outputDir;
   }
 
-  public void generate(Reader reader) throws IOException {
+  public void generate(Reader reader, CustomMappings mappings) throws IOException {
     Json2Java converter = new Json2Java();
-    converter.processJson(reader, packageName, rootClassName);
+    converter.processJson(reader, packageName, rootClassName, mappings);
     ClassDefCollection classes = converter.getClasses();
     classes.generateClasses(outputDir, "    ");
   }
@@ -50,6 +50,6 @@ public class Main {
     Reader reader = new FileReader(inputJsonFileName);
     File outputDir = File.createTempFile("json2java", "src").getParentFile();
     Main main = new Main(packageName, rootClassName, outputDir);
-    main.generate(reader);
+    main.generate(reader, null);
   }
 }

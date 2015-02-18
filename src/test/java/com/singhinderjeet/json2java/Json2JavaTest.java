@@ -34,7 +34,6 @@ public class Json2JavaTest {
     InputStreamReader reader = new InputStreamReader(json, "UTF-8");
     File dir = File.createTempFile("json2java", "src").getParentFile();
     Json2Java converter = new Json2Java();
-    converter.processJson(reader, "com.reversegeocoding", "ReverseGeocodingResults");
     CustomMappings mappings = new CustomMappings()
       .mapType("Types", "String")
       .mapType("Northeast", "Location")
@@ -44,7 +43,7 @@ public class Json2JavaTest {
       .mapType("AddressComponents", "AddressComponent")
       .mapType("LongName", "String")
       .mapType("ShortName", "String");
-    converter.transform(mappings);
+    converter.processJson(reader, "com.reversegeocoding", "ReverseGeocodingResults", mappings);
     ClassDefCollection classes = converter.getClasses();
     classes.generateClasses(dir, "    ");
   }
@@ -55,12 +54,11 @@ public class Json2JavaTest {
     InputStreamReader reader = new InputStreamReader(json, "UTF-8");
     File dir = File.createTempFile("json2java", "src").getParentFile();
     Json2Java converter = new Json2Java();
-    converter.processJson(reader, "com.tms.lineups", "Lineup");
     CustomMappings mappings = new CustomMappings()
       .mapType("LineupId", "String")
       .mapType("Name", "String")
       .mapType("Type", "String");
-    converter.transform(mappings);
+    converter.processJson(reader, "com.tms.lineups", "Lineup", mappings);
     ClassDefCollection classes = converter.getClasses();
     classes.generateClasses(dir, "    ");
   }

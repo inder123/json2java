@@ -38,6 +38,17 @@ public class ClassDefCollection {
     return clazz;
   }
 
+  public void merge(ClassDefCollection other) {
+    for (ClassDefinition clazz : other.classes) {
+      ClassDefinition existing = findByTypeName(clazz.getClassName());
+      if (existing == null) {
+        this.classes.add(clazz);
+      } else {
+        existing.merge(clazz);
+      }
+    }
+  }
+
   public void generateClasses(File dir, String indent) throws IOException {
     for (ClassDefinition def : classes) {
       def.writeClassFile(dir, indent);
@@ -53,6 +64,7 @@ public class ClassDefCollection {
 
   /** Applies the specified mappings to all the classes */
   public void transform(CustomMappings mappings) {
+    if (mappings == null) return;
     for (Map.Entry<String, String> mapping : mappings.entrySet()) {
       String origType = mapping.getKey();
       String mappedType = mapping.getValue();
