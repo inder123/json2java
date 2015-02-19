@@ -25,6 +25,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.singhinderjeet.json2java.CustomMappings.MappedFieldName;
+
 /**
  * Definition of a single class as derived from JSON data.
  *
@@ -45,7 +47,7 @@ public class ClassDefinition {
   }
 
   public void addField(ClassField classField) {
-    if (!present(classField.getName())) fields.add(classField);
+    if (!present(classField.getJsonName())) fields.add(classField);
   }
 
   public void addImport(String importedClass) {
@@ -64,7 +66,7 @@ public class ClassDefinition {
   public void merge(ClassDefinition other) {
     if (other == null) return;
     for (ClassField field : other.fields) {
-      if (!present(field.getName())) {
+      if (!present(field.getJsonName())) {
         addField(field);
       }
     }
@@ -82,15 +84,24 @@ public class ClassDefinition {
     return className;
   }
 
-  public boolean present(String fieldName) {
+  public boolean present(String fieldJsonName) {
+    return find(fieldJsonName) != null;
+  }
+
+  public ClassField find(String fieldJsonName) {
     for (ClassField field : fields) {
-      if (field.getName().equals(fieldName)) return true;
+      if (field.getJsonName().equals(fieldJsonName)) return field;
     }
-    return false;
+    return null;
   }
 
   public boolean isSame(ClassDefinition other) {
     return this.className.equals(other.className);
+  }
+
+  public void mapFieldName(MappedFieldName mapping) {
+    ClassField field = find(mapping.jsonName);
+    field.mapFieldName(mapping);
   }
 
   public void writeClassFile(File dir, String indent) throws IOException {
@@ -112,10 +123,17 @@ public class ClassDefinition {
   }
 
   private void updateImports() {
+    boolean needSerializedNameImport = false;
     for (ClassField field : fields) {
       if (field.getTypeName().equals("Date")) {
         addImport("java.util.Date");
       }
+      if (field.needsSerializedNameAnnotation()) {
+        needSerializedNameImport = true;
+      }
+    }
+    if (needSerializedNameImport) {
+      addImport("com.google.gson.annotations.SerializedName");
     }
     // remove duplicates
     Set<String> set = new HashSet<>();

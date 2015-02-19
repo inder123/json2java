@@ -17,6 +17,8 @@ package com.singhinderjeet.json2java;
 
 import java.io.IOException;
 
+import com.singhinderjeet.json2java.CustomMappings.MappedFieldName;
+
 /**
  * Definition of a class field. We assume it to be private final.
  *
@@ -24,24 +26,52 @@ import java.io.IOException;
  */
 public class ClassField {
 
-  private final String name;
+  private final String jsonName;
+  private String fieldName;
   private String type;
   private boolean isArrayType;
 
   public ClassField(String name, String type, boolean isArrayType) {
-    this.name = name;
+    this.jsonName = name;
     this.type = type;
     this.isArrayType = isArrayType;
   }
 
-  public String getName() {
+  public String getJsonName() {
+    return jsonName;
+  }
+
+  public String getFieldName() {
+    // explicitly specified fieldName shouldn't be touched
+    String name = fieldName;
+    if (fieldName == null) {
+      // Check if the first character is upper-case
+      char firstChar = jsonName.charAt(0);
+      boolean isUpperCase = Character.isUpperCase(firstChar);
+      name = isUpperCase ? Character.toLowerCase(firstChar) + jsonName.substring(1) : jsonName;
+    }
     return name;
+  }
+
+  public boolean needsSerializedNameAnnotation() {
+    boolean needAnnotation = jsonName != fieldName;
+    if (fieldName == null) { // Or if the first character is uppercase
+      char firstChar = jsonName.charAt(0);
+      needAnnotation = Character.isUpperCase(firstChar);
+    }
+    return needAnnotation;
   }
 
   public void mapType(String type, String mappedType, boolean isArrayType) {
     if (this.type.equals(type)) {
       this.type = mappedType;
       this.isArrayType = isArrayType;
+    }
+  }
+
+  public void mapFieldName(MappedFieldName mapped) {
+    if (mapped.jsonName.equals(jsonName)) {
+      this.fieldName = mapped.fieldName;
     }
   }
 
@@ -55,26 +85,30 @@ public class ClassField {
   public void appendtDeclaration(Appendable appendable, int indentLevel, String indent)
       throws IOException {
     for (int i = 0; i < indentLevel; ++i) appendable.append(indent);
-    appendable.append("private final " + getTypeName() + " " + name + ";\n");
+    if (needsSerializedNameAnnotation()) {
+      appendable.append("@SerializedName(\"").append(jsonName).append("\")\n");
+      for (int i = 0; i < indentLevel; ++i) appendable.append(indent);
+    }
+    appendable.append("private final " + getTypeName() + " " + getFieldName() + ";\n");
   }
 
   public void appendAccessorMethods(Appendable appendable, int indentLevel, String indent)
       throws IOException {
     for (int i = 0; i < indentLevel; ++i) appendable.append(indent);
-    appendable.append("public " + getTypeName() + " get" + Utils.firstLetterUpperCase(name) + "() {\n");
+    appendable.append("public " + getTypeName() + " get" + Utils.firstLetterUpperCase(getFieldName()) + "() {\n");
     for (int i = 0; i < indentLevel + 1; ++i) appendable.append(indent);
-    appendable.append("return " + name + ";\n");
+    appendable.append("return " + getFieldName() + ";\n");
     for (int i = 0; i < indentLevel; ++i) appendable.append(indent);
     appendable.append("}\n");
   }
 
   public void appendParameter(Appendable appendable) throws IOException {
-    appendable.append(getTypeName()).append(" ").append(name);
+    appendable.append(getTypeName()).append(" ").append(getFieldName());
   }
 
   public void appendConstructorAssignment(Appendable appendable, int indentLevel, String indent)
       throws IOException {
     for (int i = 0; i < indentLevel; ++i) appendable.append(indent);
-    appendable.append("this.").append(name).append(" = ").append(name).append(";");
+    appendable.append("this.").append(getFieldName()).append(" = ").append(getFieldName()).append(";");
   }
 }
