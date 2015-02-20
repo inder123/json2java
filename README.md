@@ -7,6 +7,6 @@ Look at the Json2JavaTest for examples on how to generate Java classes from a JS
 TODO:
  * Add copyright headers to the generated files
  * Add a class comment to the generated files
- * Apply custom mappings to a single class while processing its JSON
+ * Allow classes to extend each other
  * Add custom mappings to define Enums
  * Use JsonPath expressions for custom mappings
