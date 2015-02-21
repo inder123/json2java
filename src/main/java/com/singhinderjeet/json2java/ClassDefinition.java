@@ -107,7 +107,7 @@ public class ClassDefinition {
     field.mapFieldName(mapping);
   }
 
-  public void writeClassFile(File dir, String indent) throws IOException {
+  public void writeClassFile(File dir, String indent, String copyrightNotice) throws IOException {
     if (!generateFile) return;
     updateImports();
     dir = new File(dir, pkg.replaceAll("\\.", File.separator));
@@ -115,6 +115,7 @@ public class ClassDefinition {
     File classFile = new File(dir, className + ".java");
     try (Writer writer = new FileWriter(classFile)) {
       System.out.println("Writing " + classFile.getAbsolutePath());
+      if (copyrightNotice != null) writer.append(copyrightNotice);
       writer.append("package " + pkg + ";\n");
       writeImports(writer);
       writer.append("\n").append("public class " + className + " {\n");

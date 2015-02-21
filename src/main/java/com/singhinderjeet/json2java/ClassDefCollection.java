@@ -31,6 +31,7 @@ import com.singhinderjeet.json2java.CustomMappings.MappedTypeName;
 public class ClassDefCollection {
   private final List<ClassDefinition> classes = Utils.<ClassDefinition>asList(
       new ClassDefinition("java.lang", "String"));
+  private String fileCopyrightNotice;
 
   public ClassDefinition addClassDefinition(String pkg, String className) {
     ClassDefinition clazz = findByTypeName(className);
@@ -39,6 +40,10 @@ public class ClassDefCollection {
       classes.add(clazz);
     }
     return clazz;
+  }
+
+  public void setFileCopyrightNotice(String fileCopyrightNotice) {
+    this.fileCopyrightNotice = fileCopyrightNotice;
   }
 
   public void merge(ClassDefCollection other) {
@@ -54,7 +59,7 @@ public class ClassDefCollection {
 
   public void generateClasses(File dir, String indent) throws IOException {
     for (ClassDefinition def : classes) {
-      def.writeClassFile(dir, indent);
+      def.writeClassFile(dir, indent, fileCopyrightNotice);
     }
   }
 
