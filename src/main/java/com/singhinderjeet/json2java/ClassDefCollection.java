@@ -32,6 +32,7 @@ public class ClassDefCollection {
   private final List<ClassDefinition> classes = Utils.<ClassDefinition>asList(
       new ClassDefinition("java.lang", "String"));
   private String fileCopyrightNotice;
+  private String defaultClassComment;
 
   public ClassDefinition addClassDefinition(String pkg, String className) {
     ClassDefinition clazz = findByTypeName(className);
@@ -44,6 +45,10 @@ public class ClassDefCollection {
 
   public void setFileCopyrightNotice(String fileCopyrightNotice) {
     this.fileCopyrightNotice = fileCopyrightNotice;
+  }
+
+  public void setDefaultClassComment(String defaultClassComment) {
+    this.defaultClassComment = defaultClassComment;
   }
 
   public void merge(ClassDefCollection other) {
@@ -59,7 +64,7 @@ public class ClassDefCollection {
 
   public void generateClasses(File dir, String indent) throws IOException {
     for (ClassDefinition def : classes) {
-      def.writeClassFile(dir, indent, fileCopyrightNotice);
+      def.writeClassFile(dir, indent, fileCopyrightNotice, defaultClassComment);
     }
   }
 

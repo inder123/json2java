@@ -107,7 +107,8 @@ public class ClassDefinition {
     field.mapFieldName(mapping);
   }
 
-  public void writeClassFile(File dir, String indent, String copyrightNotice) throws IOException {
+  public void writeClassFile(File dir, String indent, String copyrightNotice,
+      String classComment) throws IOException {
     if (!generateFile) return;
     updateImports();
     dir = new File(dir, pkg.replaceAll("\\.", File.separator));
@@ -118,7 +119,11 @@ public class ClassDefinition {
       if (copyrightNotice != null) writer.append(copyrightNotice);
       writer.append("package " + pkg + ";\n");
       writeImports(writer);
-      writer.append("\n").append("public class " + className + " {\n");
+      if (classComment != null) {
+        classComment = classComment.replaceAll("\\$className", className);
+        writer.append("\n").append(classComment);
+      }
+      writer.append("public class " + className + " {\n");
       writeFieldDeclarations(writer, indent);
       writeConstructor(writer, indent);
       writeAccessorMethods(writer, indent);
