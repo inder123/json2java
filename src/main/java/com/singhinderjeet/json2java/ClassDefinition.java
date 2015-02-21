@@ -66,8 +66,11 @@ public class ClassDefinition {
   public void merge(ClassDefinition other) {
     if (other == null) return;
     for (ClassField field : other.fields) {
-      if (!present(field.getJsonName())) {
+      ClassField existing = find(field.getJsonName());
+      if (existing == null) {
         addField(field);
+      } else {
+        existing.merge(field);
       }
     }
   }
