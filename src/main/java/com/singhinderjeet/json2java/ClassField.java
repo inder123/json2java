@@ -175,6 +175,10 @@ public class ClassField {
     appendable.append("}\n");
   }
 
+  public void appendParameterName(Appendable appendable) throws IOException {
+    appendable.append(getFieldName());
+  }
+
   public void appendParameter(Appendable appendable) throws IOException {
     appendable.append(getTypeName()).append(" ").append(getFieldName());
   }

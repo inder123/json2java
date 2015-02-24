@@ -49,6 +49,7 @@ public class CustomMappings {
   }
   private final Map<String, MappedTypeName> mappedTypes = new HashMap<>();
   private final List<MappedFieldName> mappedFieldNames = new ArrayList<>();
+  private final Map<String, String> mappedSubTypes = new HashMap<>();
 
   /**
    * replaces all classes of type name with mappedName.
@@ -82,5 +83,14 @@ public class CustomMappings {
       this.mappedFieldNames.addAll(other.mappedFieldNames);
     }
     return this;
+  }
+
+  public Set<Map.Entry<String,String>> subTypesEntrySet() {
+      return mappedSubTypes.entrySet();
+  }
+
+  public CustomMappings mapSubType(String subType, String baseType) {
+      this.mappedSubTypes.put(subType, baseType);
+      return this;
   }
 }

@@ -39,11 +39,16 @@ public class ClassDefinition {
   private final List<String> imports = new ArrayList<>();
   private final List<ClassField> fields = new ArrayList<>();
   private final boolean generateFile;
+  private ClassDefinition baseClass;
 
   public ClassDefinition(String pkg, String className) {
     this.pkg = pkg;
     this.className = className;
     this.generateFile = !pkg.startsWith("java");
+  }
+
+  public void setBaseClass(ClassDefinition baseClass) {
+    this.baseClass = baseClass;
   }
 
   public void addField(ClassField classField) {
@@ -65,6 +70,8 @@ public class ClassDefinition {
   /** Copies the additional fields of other that are not present in self */
   public void merge(ClassDefinition other) {
     if (other == null) return;
+    this.imports.addAll(other.imports);
+    if (this.baseClass == null) this.baseClass = other.baseClass;
     for (ClassField field : other.fields) {
       ClassField existing = find(field.getJsonName());
       if (existing == null) {
@@ -123,7 +130,9 @@ public class ClassDefinition {
         classComment = classComment.replaceAll("\\$className", className);
         writer.append("\n").append(classComment);
       }
-      writer.append("public class " + className + " {\n");
+      writer.append("public class ").append(className);
+      if (baseClass != null) writer.append(" extends ").append(baseClass.getClassName());
+      writer.append(" {\n");
       writeFieldDeclarations(writer, indent);
       writeConstructor(writer, indent);
       writeAccessorMethods(writer, indent);
@@ -162,29 +171,62 @@ public class ClassDefinition {
   private void writeFieldDeclarations(Writer writer, String indent) throws IOException {
     writer.append("\n");
     for (ClassField field : fields) {
-      field.appendtDeclaration(writer, 1, indent);
+        if (!isBaseClassField(field)) {
+            field.appendtDeclaration(writer, 1, indent);
+        }
     }
   }
 
+  private boolean isBaseClassField(ClassField field) {
+    return baseClass != null && baseClass.find(field.getJsonName()) != null;
+  }
+
   private void writeConstructor(Writer writer, String indent) throws IOException {
-    writer.append("\n").append(indent);
-    writer.append("public " + className + "(");
+      writer.append("\n").append(indent);
+      writer.append("public " + className + "(");
     boolean first = true;
-    for (ClassField field : fields) {
-      if (first) first = false; else writer.append(", ");
-      field.appendParameter(writer);
+    if (baseClass != null) {
+      first = baseClass.appendParameters(writer, first);
     }
+    first = appendParameters(writer, first);
     writer.append(") {\n");
+    if (baseClass != null) {
+      baseClass.appendSuperCallInSubclass(writer, 2, indent);
+    }
     first = true;
     for (ClassField field : fields) {
+      if (isBaseClassField(field)) continue;
       if (first) first = false; else writer.append("\n");
       field.appendConstructorAssignment(writer, 2, indent);
     }
     writer.append("\n").append(indent).append("}\n");
   }
 
+  private boolean appendParameters(Writer writer, boolean first) throws IOException {
+    for (ClassField field : fields) {
+      if (isBaseClassField(field)) continue;
+      if (first) first = false; else writer.append(", ");
+      field.appendParameter(writer);
+    }
+    return first;
+  }
+
+  private void appendSuperCallInSubclass(Writer writer, int indentLevel, String indent)
+      throws IOException {
+    if (fields.size() == 0) return;
+    for (int i = 0; i < indentLevel; ++i) writer.append(indent);
+    writer.append("super(");
+    boolean first = true;
+    for (ClassField field : fields) {
+      if (first) first = false; else writer.append(", ");
+      field.appendParameterName(writer);
+    }
+    writer.append(");\n");
+  }
+
   private void writeAccessorMethods(Writer writer, String indent) throws IOException {
     for (ClassField field : fields) {
+      if (isBaseClassField(field)) continue;
       writer.append("\n");
       field.appendAccessorMethods(writer, 1, indent);
     }

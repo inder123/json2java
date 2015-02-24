@@ -78,6 +78,14 @@ public class ClassDefCollection {
   /** Applies the specified mappings to all the classes */
   public void transform(CustomMappings mappings) {
     if (mappings == null) return;
+    for (Map.Entry<String, String> mapping : mappings.subTypesEntrySet()) {
+      String subType = mapping.getKey();
+        String baseType = mapping.getValue();
+        ClassDefinition baseClass = findByTypeName(baseType);
+        ClassDefinition subClass = findByTypeName(subType);
+        if (subClass != null) subClass.setBaseClass(baseClass);
+    }
+
     for (Map.Entry<String, MappedTypeName> mapping : mappings.typesEntrySet()) {
       String origType = mapping.getKey();
       String mappedType = mapping.getValue().name;
