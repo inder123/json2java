@@ -6,4 +6,5 @@ Look at the Json2JavaTest for examples on how to generate Java classes from a JS
 
 TODO:
  * Add custom mappings to define Enums
+ * limit line width to 100 characters
  * Use JsonPath expressions for custom mappings

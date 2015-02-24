@@ -94,6 +94,10 @@ public class ClassDefinition {
     return className;
   }
 
+  public ClassDefinition getBaseClass() {
+    return baseClass;
+  }
+
   public boolean present(String fieldJsonName) {
     return find(fieldJsonName) != null;
   }
@@ -101,6 +105,9 @@ public class ClassDefinition {
   public ClassField find(String fieldJsonName) {
     for (ClassField field : fields) {
       if (field.getJsonName().equals(fieldJsonName)) return field;
+    }
+    if (baseClass != null) {
+      return baseClass.find(fieldJsonName);
     }
     return null;
   }
@@ -117,38 +124,40 @@ public class ClassDefinition {
   public void writeClassFile(File dir, String indent, String copyrightNotice,
       String classComment) throws IOException {
     if (!generateFile) return;
-    updateImports();
     dir = new File(dir, pkg.replaceAll("\\.", File.separator));
     dir.mkdirs();
+    updateImports();
     File classFile = new File(dir, className + ".java");
     try (Writer writer = new FileWriter(classFile)) {
       System.out.println("Writing " + classFile.getAbsolutePath());
-      if (copyrightNotice != null) writer.append(copyrightNotice);
-      writer.append("package " + pkg + ";\n");
-      writeImports(writer);
-      if (classComment != null) {
-        classComment = classComment.replaceAll("\\$className", className);
-        writer.append("\n").append(classComment);
-      }
-      writer.append("public class ").append(className);
-      if (baseClass != null) writer.append(" extends ").append(baseClass.getClassName());
-      writer.append(" {\n");
-      writeFieldDeclarations(writer, indent);
-      writeConstructor(writer, indent);
-      writeAccessorMethods(writer, indent);
-      writer.append("}\n");
+      writeClassFile(writer, indent, copyrightNotice, classComment);
     }
+  }
+
+  void writeClassFile(Writer writer, String indent, String copyrightNotice,
+      String classComment) throws IOException {
+    if (copyrightNotice != null) writer.append(copyrightNotice);
+    writer.append("package " + pkg + ";\n");
+    writeImports(writer);
+    if (classComment != null) {
+      classComment = classComment.replaceAll("\\$className", className);
+      writer.append("\n").append(classComment);
+    }
+    writer.append("public class ").append(className);
+    if (baseClass != null) writer.append(" extends ").append(baseClass.getClassName());
+    writer.append(" {\n");
+    writeFieldDeclarations(writer, indent);
+    writeConstructor(writer, indent);
+    writeAccessorMethods(writer, indent);
+    writer.append("}\n");
   }
 
   private void updateImports() {
     boolean needSerializedNameImport = false;
-    for (ClassField field : fields) {
-      if (field.getTypeName().equals("Date")) {
-        addImport("java.util.Date");
-      }
-      if (field.needsSerializedNameAnnotation()) {
-        needSerializedNameImport = true;
-      }
+    List<ClassField> fields = this.fields;
+    needSerializedNameImport = importClasses(fields);
+    if (baseClass != null) {
+      needSerializedNameImport |= importClasses(baseClass.fields);
     }
     if (needSerializedNameImport) {
       addImport("com.google.gson.annotations.SerializedName");
@@ -159,6 +168,19 @@ public class ClassDefinition {
     imports.clear();
     imports.addAll(set);
     Collections.sort(imports);
+  }
+
+  private boolean importClasses(List<ClassField> fields) {
+    boolean needSerializedNameImport = false;
+    for (ClassField field : fields) {
+      if (field.getTypeName().equals("Date")) {
+        addImport("java.util.Date");
+      }
+      if (field.needsSerializedNameAnnotation()) {
+        needSerializedNameImport = true;
+      }
+    }
+    return needSerializedNameImport;
   }
 
   private void writeImports(Writer writer) throws IOException {
@@ -178,10 +200,14 @@ public class ClassDefinition {
   }
 
   private boolean isBaseClassField(ClassField field) {
-    return baseClass != null && baseClass.find(field.getJsonName()) != null;
+    return isBaseClassField(field.getJsonName());
   }
 
-  private void writeConstructor(Writer writer, String indent) throws IOException {
+  boolean isBaseClassField(String fieldJsonName) {
+    return baseClass != null && baseClass.find(fieldJsonName) != null;
+  }
+
+  void writeConstructor(Writer writer, String indent) throws IOException {
       writer.append("\n").append(indent);
       writer.append("public " + className + "(");
     boolean first = true;
