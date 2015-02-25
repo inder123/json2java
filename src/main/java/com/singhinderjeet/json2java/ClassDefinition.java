@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -143,6 +144,7 @@ public class ClassDefinition {
     dir = new File(dir, pkg.replaceAll("\\.", File.separator));
     dir.mkdirs();
     updateImports();
+    updateFields();
     File classFile = new File(dir, className + ".java");
     try (Writer writer = new FileWriter(classFile)) {
       System.out.println("Writing " + classFile.getAbsolutePath());
@@ -184,6 +186,13 @@ public class ClassDefinition {
     imports.clear();
     imports.addAll(set);
     Collections.sort(imports);
+  }
+
+  private void updateFields() {
+    Collections.sort(fields, new Comparator<ClassField>() {
+      @Override public int compare(ClassField field1, ClassField field2) {
+        return field1.getFieldName().compareTo(field2.getFieldName());
+      }});
   }
 
   private boolean importClasses(List<ClassField> fields) {
