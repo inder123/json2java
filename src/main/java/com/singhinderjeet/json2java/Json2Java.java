@@ -37,11 +37,19 @@ public class Json2Java {
       CustomMappings mappings) throws IOException {
     JsonElement root = new JsonParser().parse(reader);
     reader.close();
+    processJson(pkg, className, mappings, root);
+  }
+
+  private void processJson(String pkg, String className, CustomMappings mappings, JsonElement root)
+      throws IOException {
     while (!(root instanceof JsonObject)) {
       if (root instanceof JsonArray) {
-        root = root.getAsJsonArray().get(0);
+        for (JsonElement arrayElement : root.getAsJsonArray()) {
+          processJson(pkg, className, mappings, arrayElement);
+        }
+        return; // nothing much needs to be done
       } else if (root instanceof JsonPrimitive) {
-        root = null;
+        return; // can't generate classes for a primitive
       }
     }
     if (root instanceof JsonObject) {

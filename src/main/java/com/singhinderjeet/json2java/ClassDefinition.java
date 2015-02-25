@@ -38,7 +38,7 @@ public class ClassDefinition {
   private String className;
   private final List<String> imports = new ArrayList<>();
   private final List<ClassField> fields = new ArrayList<>();
-  private final boolean generateFile;
+  private boolean generateFile;
   private ClassDefinition baseClass;
 
   public ClassDefinition(String pkg, String className) {
@@ -49,6 +49,10 @@ public class ClassDefinition {
 
   public void setBaseClass(ClassDefinition baseClass) {
     this.baseClass = baseClass;
+  }
+
+  public void setGenerateFile(boolean generate) {
+    this.generateFile = generate;
   }
 
   public void addField(ClassField classField) {
@@ -71,7 +75,11 @@ public class ClassDefinition {
   public void merge(ClassDefinition other) {
     if (other == null) return;
     this.imports.addAll(other.imports);
-    if (this.baseClass == null) this.baseClass = other.baseClass;
+    if (this.baseClass != null) {
+      this.baseClass.merge(other.baseClass);
+    } else {
+      this.baseClass = other.baseClass;
+    }
     for (ClassField field : other.fields) {
       ClassField existing = find(field.getJsonName());
       if (existing == null) {
@@ -92,6 +100,14 @@ public class ClassDefinition {
 
   public String getClassName() {
     return className;
+  }
+
+  public int getFieldsCount() {
+    int count = fields.size();
+    if (baseClass != null) {
+      count += baseClass.getFieldsCount();
+    }
+    return count;
   }
 
   public ClassDefinition getBaseClass() {
@@ -118,7 +134,7 @@ public class ClassDefinition {
 
   public void mapFieldName(MappedFieldName mapping) {
     ClassField field = find(mapping.jsonName);
-    field.mapFieldName(mapping);
+    if (field != null) field.mapFieldName(mapping);
   }
 
   public void writeClassFile(File dir, String indent, String copyrightNotice,
@@ -256,5 +272,12 @@ public class ClassDefinition {
       writer.append("\n");
       field.appendAccessorMethods(writer, 1, indent);
     }
+  }
+
+  @Override
+  public String toString() {
+    return "ClassDefinition [pkg=" + pkg + ", className=" + className + ", imports=" + imports
+        + ", fields=" + fields + ", generateFile=" + generateFile + ", baseClass=" + baseClass
+        + "]";
   }
 }

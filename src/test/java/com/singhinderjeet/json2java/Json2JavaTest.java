@@ -15,6 +15,8 @@
  */
 package com.singhinderjeet.json2java;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -54,5 +56,16 @@ public class Json2JavaTest {
     converter.processJson(reader, "com.tms.lineups", "Lineup", null);
     ClassDefCollection classes = converter.getClasses();
     classes.generateClasses(dir, "    ");
+  }
+
+  @Test
+  public void testIncorporateFieldsFromAllJson() throws Exception {
+    InputStream json = Json2JavaTest.class.getResourceAsStream("/tms-lineups.json");
+    InputStreamReader reader = new InputStreamReader(json, "UTF-8");
+    Json2Java converter = new Json2Java();
+    converter.processJson(reader, "com.tms.lineups", "Lineup", null);
+    ClassDefCollection classes = converter.getClasses();
+    ClassDefinition clazz = classes.findByTypeName("Mso");
+    assertTrue(clazz.present("name"));
   }
 }

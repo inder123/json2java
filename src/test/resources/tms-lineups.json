@@ -2,7 +2,10 @@
   {
     "type": "OTA",
     "lineupId": "USA-OTA27713",
-    "name": "Local"
+    "name": "Local",
+    "mso": {
+      "id": "08670"
+     }
   },
   {
     "type": "CABLE",

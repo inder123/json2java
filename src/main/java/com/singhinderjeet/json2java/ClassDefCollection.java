@@ -51,6 +51,11 @@ public class ClassDefCollection {
     this.defaultClassComment = defaultClassComment;
   }
 
+  public void setGenerateClassFile(String className, boolean generate) {
+    ClassDefinition clazz = findByTypeName(className);
+    if (clazz != null) clazz.setGenerateFile(generate);
+  }
+
   public void merge(ClassDefCollection other) {
     for (ClassDefinition clazz : other.classes) {
       ClassDefinition existing = findByTypeName(clazz.getClassName());
@@ -68,7 +73,7 @@ public class ClassDefCollection {
     }
   }
 
-  private ClassDefinition findByTypeName(String typeName) {
+  public ClassDefinition findByTypeName(String typeName) {
     for (ClassDefinition def : classes) {
       if (def.getClassName().equals(typeName)) return def;
     }

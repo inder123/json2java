@@ -63,6 +63,10 @@ public class ClassField {
     return jsonName;
   }
 
+  public Set<JsonElement> getJsonValues() {
+    return jsonValues;
+  }
+
   public String getFieldName() {
     // explicitly specified fieldName shouldn't be touched
     String name = fieldName;
@@ -187,5 +191,12 @@ public class ClassField {
       throws IOException {
     for (int i = 0; i < indentLevel; ++i) appendable.append(indent);
     appendable.append("this.").append(getFieldName()).append(" = ").append(getFieldName()).append(";");
+  }
+
+  @Override
+  public String toString() {
+    return "ClassField [jsonName=" + jsonName + ", jsonValues=" + jsonValues + ", fieldName="
+        + fieldName + ", type=" + type + ", mappedType=" + mappedType + ", isArrayType="
+        + isArrayType + "]";
   }
 }
