@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -58,6 +59,16 @@ public class ClassDefinition {
 
   public void addField(ClassField classField) {
     if (!present(classField.getJsonName())) fields.add(classField);
+  }
+
+  public void deleteField(ClassField classField) {
+    Iterator<ClassField> iterator = fields.iterator();
+    while (iterator.hasNext()) {
+      ClassField field = iterator.next();
+      if (field.getJsonName().equals(classField.getJsonName())) {
+        iterator.remove();
+      }
+    }
   }
 
   public void addImport(String importedClass) {
