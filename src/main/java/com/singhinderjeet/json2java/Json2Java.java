@@ -94,4 +94,8 @@ public class Json2Java {
   public ClassDefCollection getClasses() {
     return classes;
   }
+
+  public void addEnum(EnumDefinition enumClass) {
+    this.classes.addEnumClass(enumClass);
+  }
 }

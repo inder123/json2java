@@ -34,6 +34,10 @@ public class ClassDefCollection {
   private String fileCopyrightNotice;
   private String defaultClassComment;
 
+  public void addEnumClass(EnumDefinition enumClass) {
+    this.classes.add(enumClass);
+  }
+
   public ClassDefinition addClassDefinition(String pkg, String className) {
     ClassDefinition clazz = findByTypeName(className);
     if (clazz == null) {

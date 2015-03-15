@@ -35,12 +35,12 @@ import com.singhinderjeet.json2java.CustomMappings.MappedFieldName;
  */
 public class ClassDefinition {
 
-  private final String pkg;
-  private String className;
-  private final List<String> imports = new ArrayList<>();
-  private final List<ClassField> fields = new ArrayList<>();
-  private boolean generateFile;
-  private ClassDefinition baseClass;
+  protected final String pkg;
+  protected String className;
+  protected final List<String> imports = new ArrayList<>();
+  protected final List<ClassField> fields = new ArrayList<>();
+  protected boolean generateFile;
+  protected ClassDefinition baseClass;
 
   public ClassDefinition(String pkg, String className) {
     this.pkg = pkg;
@@ -161,6 +161,10 @@ public class ClassDefinition {
       classComment = classComment.replaceAll("\\$className", className);
       writer.append("\n").append(classComment);
     }
+    writeClassBody(writer, indent);
+  }
+
+  protected void writeClassBody(Writer writer, String indent) throws IOException {
     writer.append("public class ").append(className);
     if (baseClass != null) writer.append(" extends ").append(baseClass.getClassName());
     writer.append(" {\n");
@@ -171,12 +175,7 @@ public class ClassDefinition {
   }
 
   private void updateImports() {
-    boolean needSerializedNameImport = false;
-    List<ClassField> fields = this.fields;
-    needSerializedNameImport = importClasses(fields);
-    if (baseClass != null) {
-      needSerializedNameImport |= importClasses(baseClass.fields);
-    }
+    boolean needSerializedNameImport = needSerializedNameImport();
     if (needSerializedNameImport) {
       addImport("com.google.gson.annotations.SerializedName");
     }
@@ -186,6 +185,16 @@ public class ClassDefinition {
     imports.clear();
     imports.addAll(set);
     Collections.sort(imports);
+  }
+
+  protected boolean needSerializedNameImport() {
+    boolean needSerializedNameImport = false;
+    List<ClassField> fields = this.fields;
+    needSerializedNameImport = importClasses(fields);
+    if (baseClass != null) {
+      needSerializedNameImport |= importClasses(baseClass.fields);
+    }
+    return needSerializedNameImport;
   }
 
   private void updateFields() {
@@ -215,7 +224,7 @@ public class ClassDefinition {
     }
   }
 
-  private void writeFieldDeclarations(Writer writer, String indent) throws IOException {
+  protected void writeFieldDeclarations(Writer writer, String indent) throws IOException {
     writer.append("\n");
     for (ClassField field : fields) {
         if (!isBaseClassField(field)) {
@@ -275,7 +284,7 @@ public class ClassDefinition {
     writer.append(");\n");
   }
 
-  private void writeAccessorMethods(Writer writer, String indent) throws IOException {
+  protected void writeAccessorMethods(Writer writer, String indent) throws IOException {
     for (ClassField field : fields) {
       if (isBaseClassField(field)) continue;
       writer.append("\n");
