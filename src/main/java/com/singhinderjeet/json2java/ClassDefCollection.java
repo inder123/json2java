@@ -22,6 +22,7 @@ import java.util.Map;
 
 import com.singhinderjeet.json2java.CustomMappings.MappedFieldName;
 import com.singhinderjeet.json2java.CustomMappings.MappedTypeName;
+import com.singhinderjeet.json2java.CustomMappings.MovedFieldName;
 
 /**
  * A list of class definitions.
@@ -118,6 +119,17 @@ public class ClassDefCollection {
       ClassDefinition origClass = findByTypeName(mapping.className);
       if (origClass != null) {
         origClass.mapFieldName(mapping);
+      }
+    }
+    for (MovedFieldName field : mappings.movedFieldNames()) {
+      ClassDefinition origClass = findByTypeName(field.baseType);
+      ClassDefinition destClass = findByTypeName(field.subType);
+      if (origClass != null && destClass != null) {
+        ClassField classField = origClass.find(field.fieldJsonName);
+        if (classField != null) {
+          destClass.addField(classField);
+          origClass.deleteField(classField);
+        }
       }
     }
   }

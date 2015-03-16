@@ -36,7 +36,16 @@ public class CustomMappings {
       this.isArrayType = isArrayType;
     }
   }
-
+  public static final class MovedFieldName {
+    public final String baseType;
+    public final String subType;
+    public final String fieldJsonName;
+    public MovedFieldName(String fieldName, String baseType, String subType) {
+      this.baseType = baseType;
+      this.subType = subType;
+      this.fieldJsonName = fieldName;
+    }
+  }
   public static final class MappedFieldName {
     public final String className;
     public final String jsonName;
@@ -49,6 +58,7 @@ public class CustomMappings {
   }
   private final Map<String, MappedTypeName> mappedTypes = new HashMap<>();
   private final List<MappedFieldName> mappedFieldNames = new ArrayList<>();
+  private final List<MovedFieldName> movedFieldNames = new ArrayList<>();
   private final Map<String, String> mappedSubTypes = new HashMap<>();
 
   /**
@@ -69,6 +79,11 @@ public class CustomMappings {
     return this;
   }
 
+  public CustomMappings moveFieldToSubType(String fieldJsonName, String baseType, String subType) {
+    this.movedFieldNames.add(new MovedFieldName(fieldJsonName, baseType, subType));
+    return this;
+  }
+
   public Set<Map.Entry<String, MappedTypeName>> typesEntrySet() {
     return mappedTypes.entrySet();
   }
@@ -77,10 +92,15 @@ public class CustomMappings {
     return mappedFieldNames;
   }
 
+  public List<MovedFieldName> movedFieldNames() {
+    return movedFieldNames;
+  }
+
   public CustomMappings addMappings(CustomMappings other) {
     if (other != null) {
       this.mappedTypes.putAll(other.mappedTypes);
       this.mappedFieldNames.addAll(other.mappedFieldNames);
+      this.movedFieldNames.addAll(other.movedFieldNames);
     }
     return this;
   }
