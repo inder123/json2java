@@ -132,5 +132,11 @@ public class ClassDefCollection {
         }
       }
     }
+    for (MappedFieldName mapping : mappings.deletedFields()) {
+      ClassDefinition origClass = findByTypeName(mapping.className);
+      if (origClass != null) {
+        origClass.deleteField(mapping.jsonName);
+      }
+    }
   }
 }

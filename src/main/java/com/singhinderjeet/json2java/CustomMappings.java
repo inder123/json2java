@@ -60,6 +60,7 @@ public class CustomMappings {
   private final List<MappedFieldName> mappedFieldNames = new ArrayList<>();
   private final List<MovedFieldName> movedFieldNames = new ArrayList<>();
   private final Map<String, String> mappedSubTypes = new HashMap<>();
+  private final List<MappedFieldName> deletedFieldNames = new ArrayList<>();
 
   /**
    * replaces all classes of type name with mappedName.
@@ -79,6 +80,11 @@ public class CustomMappings {
     return this;
   }
 
+  public CustomMappings deleteFieldName(String className, String jsonName) {
+    deletedFieldNames.add(new MappedFieldName(className, jsonName, null));
+    return this;
+  }
+
   public CustomMappings moveFieldToSubType(String fieldJsonName, String baseType, String subType) {
     this.movedFieldNames.add(new MovedFieldName(fieldJsonName, baseType, subType));
     return this;
@@ -92,6 +98,10 @@ public class CustomMappings {
     return mappedFieldNames;
   }
 
+  public List<MappedFieldName> deletedFields() {
+    return deletedFieldNames;
+  }
+
   public List<MovedFieldName> movedFieldNames() {
     return movedFieldNames;
   }
@@ -100,6 +110,7 @@ public class CustomMappings {
     if (other != null) {
       this.mappedTypes.putAll(other.mappedTypes);
       this.mappedFieldNames.addAll(other.mappedFieldNames);
+      this.deletedFieldNames.addAll(other.deletedFieldNames);
       this.movedFieldNames.addAll(other.movedFieldNames);
     }
     return this;

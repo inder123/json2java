@@ -62,6 +62,7 @@ public class ClassDefinition {
   }
 
   public void deleteField(ClassField classField) {
+    if (classField == null) return;
     Iterator<ClassField> iterator = fields.iterator();
     while (iterator.hasNext()) {
       ClassField field = iterator.next();
@@ -69,6 +70,11 @@ public class ClassDefinition {
         iterator.remove();
       }
     }
+  }
+
+  public void deleteField(String jsonName) {
+    ClassField field = find(jsonName);
+    if (field != null) deleteField(field);
   }
 
   public void addImport(String importedClass) {
