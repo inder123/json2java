@@ -82,4 +82,21 @@ public class ClassDefinitionTest {
     classContents = writer.toString();
     assertTrue(classContents.contains("@SerializedName(\"aa\")"));
   }
+
+  @Test
+  public void testWriteAccessorMethods() throws Exception {
+    ClassDefinition clazz = new ClassDefinition("a.b", "BaseClass");
+    clazz.addField(new ClassField("bool", new JsonPrimitive(false), "A", false));
+    clazz.addField(new ClassField("str", new JsonPrimitive("Hello World"), "A", false));
+    clazz.addField(new ClassField("number", new JsonPrimitive(2), "A", false));
+    clazz.addField(new ClassField("floatingPoint", new JsonPrimitive(2.2d), "A", false));
+
+    StringWriter writer = new StringWriter();
+    clazz.writeAccessorMethods(writer, "");
+    String value = writer.toString().trim();
+    assertTrue(value, value.contains("public boolean isBool()"));
+    assertTrue(value, value.contains("public String getStr()"));
+    assertTrue(value, value.contains("public int getNumber()"));
+    assertTrue(value, value.contains("public double getFloatingPoint()"));
+  }
 }

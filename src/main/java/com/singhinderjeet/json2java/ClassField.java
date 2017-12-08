@@ -172,7 +172,10 @@ public class ClassField {
   public void appendAccessorMethods(Appendable appendable, int indentLevel, String indent)
       throws IOException {
     for (int i = 0; i < indentLevel; ++i) appendable.append(indent);
-    appendable.append("public " + getTypeName() + " get" + Utils.firstLetterUpperCase(getFieldName()) + "() {\n");
+    String typeName = getTypeName();
+    boolean isBoolean = "Boolean".equals(typeName) || "boolean".equals(typeName);
+    String getterPrefix = isBoolean ? "is" : "get";
+    appendable.append("public " + typeName + " " + getterPrefix + Utils.firstLetterUpperCase(getFieldName()) + "() {\n");
     for (int i = 0; i < indentLevel + 1; ++i) appendable.append(indent);
     appendable.append("return " + getFieldName() + ";\n");
     for (int i = 0; i < indentLevel; ++i) appendable.append(indent);
